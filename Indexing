@@ -1,0 +1,42 @@
+--Indexing
+		When you create an index, MySQL builds a separate data structure (e.g., a B-tree) that stores the values of the indexed column(s) in a sorted order.
+	When a query is executed, MySQL uses the index to quickly locate the rows that match the query conditions, instead of scanning the entire table (a process called a full table scan).
+	
+	--Creating Indexes
+		--Primary Key Index
+		--Unique Index
+		--Standard Index		
+			CREATE TABLE orders (
+			    order_id INT AUTO_INCREMENT PRIMARY KEY,
+			    customer_id INT NOT NULL,
+			    order_date DATE NOT NULL,
+			    INDEX idx_customer (customer_id)
+			);
+		--Composite Index
+			CREATE TABLE orders (
+			    order_id INT AUTO_INCREMENT PRIMARY KEY,
+			    customer_id INT NOT NULL,
+			    order_date DATE NOT NULL,
+			    INDEX idx_customer_order (customer_id, order_date)
+			);
+		--Adding Indexes to Existing Tables
+			ALTER TABLE orders
+			ADD INDEX idx_order_date (order_date);
+		--Add a Composite Index
+			ALTER TABLE orders
+			ADD INDEX idx_customer_order (customer_id, order_date);
+	--Dropping Indexes
+		--ALTER TABLE orders
+			DROP INDEX idx_order_date;
+--Best Practices for Indexing
+	Index Selectively: Avoid over-indexing, as it can slow down write operations (INSERT, UPDATE, DELETE).
+
+	Use Composite Indexes Wisely: Create composite indexes for queries that filter or sort by multiple columns.
+
+	Monitor Index Usage: Use the EXPLAIN statement to analyze query performance and ensure indexes are being used.
+
+	Regularly Maintain Indexes: Rebuild or optimize indexes periodically to improve performance.
+
+	Avoid Indexing Blob/Text Columns: Indexing large text or binary columns can be inefficient.
+
+

@@ -1,0 +1,183 @@
+--tables
+--data types
+	DATE	YYYY-MM-DD	Stores a date (year, month, day).
+	TIME	HH:MM:SS	Stores a time (hours, minutes, seconds).
+	DATETIME	YYYY-MM-DD HH:MM:SS	Stores both date and time.
+	TIMESTAMP	YYYY-MM-DD HH:MM:SS	Stores both date and time, with automatic timezone conversion.
+	YEAR	YYYY	Stores a year (4-digit or 2-digit format).
+	--ENUM data type is used to define a column that can store a predefined set of values. It is useful when you want to restrict the values in a column to a specific list of options. For example, you might use an ENUM column to store statuses like 'active', 'inactive', or 'pending'.
+		CREATE TABLE table_name (
+	    column_name ENUM('value1', 'value2', 'value3', ...)
+	);
+
+--create
+	CREATE TABLE table_name (
+	    column1_name data_type constraints,
+	    column2_name data_type constraints,
+	    ...
+	    PRIMARY KEY (column_name)
+	);
+	table_name: The name of the table you want to create.(unique)
+	column_name: The name of a column in the table.
+	data_type: The type of data the column will store 
+	(e.g., INT, VARCHAR, DATE, etc.).
+	constraints: Optional rules for the column 
+	(e.g., NOT NULL, UNIQUE, AUTO_INCREMENT, etc.).
+	PRIMARY KEY: Specifies the primary key for the table 
+	(a unique identifier for each row).
+	--Creating a Simple Table
+	--set autominctement=0
+	--set autominctement=1
+	
+		CREATE TABLE users (
+		
+		    user_id INT AUTO_INCREMENT PRIMARY KEY,
+		    username VARCHAR(50) NOT NULL UNIQUE,
+		    email VARCHAR(100) NOT NULL UNIQUE,
+		    password_hash VARCHAR(255) NOT NULL,
+		    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);
+		--VARCHAR column with a length of 255 (to accommodate most hashing algorithms).
+		--Use a Strong Hashing Algorithm: Use algorithms like bcrypt, Argon2, or PBKDF2. Avoid weak algorithms like MD5(most used) or SHA-1.
+		
+	--Creating a Table with Foreign Key
+		CREATE TABLE orders (
+		    order_id INT AUTO_INCREMENT PRIMARY KEY,
+		    user_id INT,
+		    order_date DATE NOT NULL,
+		    total_amount DECIMAL(10, 2) NOT NULL,
+		    FOREIGN KEY (user_id) REFERENCES users(user_id)
+		);
+	--Table with Multiple Constraints
+		CREATE TABLE products (
+		    product_id INT AUTO_INCREMENT PRIMARY KEY,
+		    product_name VARCHAR(100) NOT NULL,
+		    price DECIMAL(10, 2) NOT NULL CHECK (price > 0),
+		    stock_quantity INT NOT NULL CHECK (stock_quantity >= 0),
+		    category VARCHAR(50) DEFAULT 'General',
+		    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);
+--Show & Describe
+	DESCRIPE table_name;
+	DESC table_name;
+	SHOW TABLES;
+	SHOW COLUMNS FROM tbl_name;
+	SHOW INDEX FROM tbl_name;
+--Modifying Tables
+	--Add a New Column:
+		ALTER TABLE users 
+		ADD COLUMN last_login TIMESTAMP;
+	--Modify a Column:
+		ALTER TABLE users 
+		MODIFY COLUMN email VARCHAR(150);
+	--Drop a Column:
+		ALTER TABLE users 
+		DROP COLUMN last_login;
+	--Add a Foreign Key:
+		ALTER TABLE orders 
+		ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id);
+	--drop a Foreign Key:????
+		ALTER TABLE orders
+		DROP FOREIGN KEY fk_user;
+		
+--Dropping Tables
+	--To delete a table, use the DROP TABLE statement:
+		DROP TABLE table_name;
+	Warning: This will permanently delete the table and all its data. Use with caution!
+========================insert============================
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+--Inserting Data into All Columns
+	INSERT INTO table_name
+	VALUES (value1, value2, value3, ...);
+	INSERT INTO employees (first_name, last_name, department, salary)
+	VALUES ('John', 'Doe', 'Sales', 50000);
+--Inserting Data into Specific Columns
+	INSERT INTO table_name (column1, column2)
+	VALUES (value1, value2);
+--Inserting Data into Specific Columns
+	INSERT INTO table_name (column1, column2)
+	VALUES (value1, value2);
+--Inserting Multiple Rows
+	INSERT INTO table_name (column1, column2, column3, ...)
+	VALUES 
+	    (value1, value2, value3, ...),
+	    (value4, value5, value6, ...),
+	    (value7, value8, value9, ...);
+	INSERT INTO employees (first_name, last_name, department, salary)
+	VALUES 
+	    ('Jane', 'Smith', 'HR', 60000),
+	    ('Alice', 'Johnson', 'IT', 70000),
+	    ('Bob', 'Brown', 'Finance', 55000);
+--Inserting Data from Another Table
+	INSERT INTO table_name (column1, column2, column3, ...)
+	SELECT column1, column2, column3, ...
+	FROM another_table
+	WHERE condition;
+	
+	INSERT INTO high_salary_employees (first_name, last_name, salary)
+	SELECT first_name, last_name, salary
+	FROM employees
+	WHERE salary > 60000;
+--Handling Auto-Increment Columns
+	CREATE TABLE users (
+	    user_id INT AUTO_INCREMENT PRIMARY KEY,
+	    username VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) NOT NULL
+	);
+
+	INSERT INTO users (username, email)
+	VALUES ('john_doe', 'john@example.com');
+--Inserting NULL Values
+	INSERT INTO table_name (column1, column2)
+	VALUES (NULL, 'some_value');
+	INSERT INTO employees (first_name, last_name, department, salary)
+	VALUES ('Mike', 'Jones', DEFAULT, NULL);
+--Common Errors and Troubleshooting
+	--Column Count Mismatch
+	--Duplicate Entry for Primary Key
+	--Data Type Mismatch
+	--NOT NULL Constraint Violation
+---full example
+	CREATE TABLE example_table (
+	    id INT AUTO_INCREMENT PRIMARY KEY,          -- Integer
+	    name VARCHAR(50) NOT NULL,                  -- Variable-length string
+	    description TEXT,                           -- Large text
+	    price DECIMAL(10, 2),                       -- Decimal number
+	    is_active BOOLEAN,                          -- Boolean (stored as TINYINT)
+	    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Date and time
+	    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 	    -- Timestamp
+	    birth_date DATE,                            -- Date
+	    start_time TIME,                            -- Time
+	    status ENUM('active', 'inactive', 'pending'), -- Enum
+	    metadata JSON                               -- JSON data
+	);
+	INSERT INTO example_table (
+    	name, description, price, is_active, birth_date, start_time, status, metadata
+	)
+	VALUES (
+	    'John Doe',                                 -- name (VARCHAR)
+	    'A sample description for John Doe.',       -- description (TEXT)
+	    99.99,                                      -- price (DECIMAL)
+	    TRUE,                                       -- is_active (BOOLEAN)
+	    '1990-05-15',                               -- birth_date (DATE)
+	    '14:30:00',                                 -- start_time (TIME)
+	    'active',                                   -- status (ENUM)
+	    '{"department": "Sales", "role": "Manager"}' -- metadata (JSON)
+	);
+	
+========================Note============================
+9. Best Practices
+Use Descriptive Names: Choose meaningful names for tables and columns.
+
+Normalize Your Data: Avoid redundancy by organizing data into multiple related tables.
+
+Use Primary Keys: Always define a primary key for each table.
+
+Use Foreign Keys: Enforce relationships between tables using foreign keys.
+
+Avoid Reserved Words: Do not use MySQL reserved words (e.g., SELECT, INSERT, etc.) as table or column names.
+
+Backup Your Data: Regularly back up your database to prevent data loss.
+
+

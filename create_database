@@ -1,0 +1,57 @@
+--default database
+	--mysql database is a system database that contains tables storing critical 	information about the MySQL server's operation.It includes tables for user accounts, privileges, roles, plugins, and other system-related data.
+	--sys database is a set of objects (views, stored procedures, and functions) that help you interpret the data in the Performance Schema and Information Schema.It provides a more user-friendly way to monitor and troubleshoot MySQL performance.
+	--information_schema database is a virtual database that provides metadata about the MySQL server and its databases, tables, columns, and more.It is used for querying information about the structure and configuration of the server.
+	--performance_schema database is used to monitor and analyze the performance of the MySQL server.It provides detailed information about server events, such as queries, locks, and resource usage.
+--create database
+	--database name must be unique,no space
+	--CHARACTER: (server, database, table, column)A character set is a set of symbols and encodings used to store and 		represent text data. Common character sets include:
+		--ASCII: Basic English characters.
+		--Latin1: Supports Western European languages.
+		--UTF-8: A widely used character set that supports almost all languages and symbols.
+		--UTF8MB4: An extension of UTF-8 that supports additional characters like emojis.
+	--COLLATE :Collation defines how characters are compared and sorted in a 			database.
+		--It determines:
+			Whether comparisons are case-sensitive or case-insensitive.
+			How accents and special characters are handled.
+			The order in which characters are sorted.
+			For UTF8MB4 Character Set
+				utf8mb4_general_ci: Case-insensitive, general-purpose collation. ---> treats A and a as the same.
+				utf8mb4_unicode_ci: Case-insensitive, supports Unicode sorting rules (more accurate for multilingual data).---->treats é and e as the same.
+				utf8mb4_bin: Binary collation, case-sensitive.--->treats A and a as different & é and e as different.
+
+			For Latin1 Character Set
+				latin1_general_ci: Case-insensitive, general-purpose collation for Latin1.
+
+				latin1_bin: Binary collation, case-sensitive.
+
+	CREATE DATABASE mydb 
+	[CHARACTER SET utf8mb4 ]
+	[COLLATE utf8mb4_unicode_ci];
+--Show Database Definition
+	SHOW CREATE DATABASE db_name;
+--Selecting a Database
+	USE database_name;
+	or from terminal
+	mysql -D dbname -h hostname -u username –p
+--Viewing Databases
+	SHOW DATABASES;
+	or 
+	SELECT DATABASE();
+	--To Know which database is selected:
+		SELECT DATABASE();
+
+--Deleting a Database
+	DROP DATABASE database_name;
+	--drop datbase--->tables-->column-->data
+--Modifying a Database
+	ALTER DATABASE mydb
+	CHARACTER SET utf8mb4
+	COLLATE utf8mb4_unicode_ci;
+	
+--Best Practices
+	Use Descriptive Names: Choose meaningful names for databases.
+
+	Backup Regularly: Always back up databases before making significant changes.
+
+	Use Appropriate Character Sets: Choose character sets and collations that match your data requirements (e.g., utf8mb4 for full Unicode support).

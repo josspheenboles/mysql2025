@@ -1,0 +1,44 @@
+------------------Creating Users and maintaining their privileges------------
+--CREATE USER 
+	CREATE USER 'username'@'host' IDENTIFIED BY 'password';
+	--username: The name of the user.
+	--host: The host from which the user can connect (e.g., localhost, % for any host).
+
+	--password: The password for the user.
+--Set password expiration
+	CREATE USER 'alice'@'localhost' IDENTIFIED BY 'Password123!' PASSWORD EXPIRE INTERVAL 90 DAY;
+--Lock a user account upon creation:
+	--CREATE USER 'bob'@'localhost' IDENTIFIED BY 'Password123!' ACCOUNT LOCK;
+--------------------------------------------------------------------
+--Granting Privileges
+	--Common Privileges
+		--ALL PRIVILEGES: Grant all privileges.
+		--Database-Level Privileges:
+			SELECT: Read data.
+			INSERT: Add data.
+			UPDATE: Modify data.
+			DELETE: Remove data.
+			CREATE: Create tables/databases.
+			DROP: Delete tables/databases.
+			ALTER: Modify table structure.
+			INDEX: Create/drop indexes.
+		--Global Privileges:
+			CREATE USER: Create new users.
+			SHOW DATABASES: View all databases.
+			RELOAD: Reload server settings.
+			SHUTDOWN: Shut down the server.
+
+--Basic Syntax
+	GRANT privilege_type ON database_name.table_name TO 'username'@'host';
+		privilege_type: The type of privilege (e.g., SELECT, INSERT, UPDATE, ALL PRIVILEGES).
+		database_name.table_name: The database and table to which the privilege applies (use *.* for all databases/tables).
+
+		username and host: The user and host to which the privilege is granted.
+		
+--Granting with Options
+	Allow a user to grant their privileges to others:
+	GRANT SELECT ON mydb.* TO 'john'@'localhost' WITH GRANT OPTION;
+--Revoking Privileges
+	Basic Syntax
+		REVOKE privilege_type ON database_name.table_name FROM 'username'@'host';
+
