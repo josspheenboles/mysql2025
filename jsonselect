@@ -1,0 +1,17 @@
+INSERT INTO example_table (id, data)
+VALUES 
+(1, '{"name": "John", "age": 30, "city": "New York"}'),
+(2, '{"name": "Jane", "age": 25, "city": "Los Angeles"}'),
+(3, '{"name": "Bob", "age": 40, "city": "Chicago"}');
+
+===================================
+SELECT data
+FROM example_table;
+===================================
+SELECT data->'$.name' AS name
+FROM example_table;
+===================================
+SELECT *
+FROM example_table
+WHERE data->>'$.city' = 'New York';
+===================================

@@ -1,0 +1,130 @@
+---- DML manipulates data (e.g., inserting, updating, deleting).
+mysql--->string '' or ""
+posrgresql --->string ''
+========================insert============================
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+--Inserting Data into All Columns
+	INSERT INTO table_name
+	VALUES (value1, value2, value3, ...);
+	INSERT INTO employees (first_name, last_name, department, salary)
+	VALUES ('John', 'Doe', 'Sales', 50000);
+--Inserting Data into Specific Columns
+	INSERT INTO table_name (column1, column2)
+	VALUES (value1, value2);
+--Inserting Data into Specific Columns
+	INSERT INTO table_name (column1, column2)
+	VALUES (value1, value2);
+--Inserting Multiple Rows
+	INSERT INTO table_name (column1, column2, column3, ...)
+	VALUES 
+	    (value1, value2, value3, ...),
+	    (value4, value5, value6, ...),
+	    (value7, value8, value9, ...);
+	INSERT INTO employees (first_name, last_name, department, salary)
+	VALUES 
+	    ('Jane', 'Smith', 'HR', 60000),
+	    ('Alice', 'Johnson', 'IT', 70000),
+	    ('Bob', 'Brown', 'Finance', 55000);
+--****************** Inserting Data from Another Table ******************
+	INSERT INTO table_name (column1, column2, column3, ...)
+	SELECT column1, column2, column3, ...
+	FROM another_table
+	WHERE condition;
+	
+	INSERT INTO high_salary_employees (first_name, last_name, salary)
+	SELECT first_name, last_name, salary
+	FROM employees
+	WHERE salary > 60000;
+--Handling Auto-Increment Columns
+	CREATE TABLE users (
+	    user_id INT AUTO_INCREMENT PRIMARY KEY,
+	    username VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) NOT NULL
+	);
+
+	INSERT INTO users (username, email)
+	VALUES ('john_doe', 'john@example.com');
+--Inserting NULL Values
+	INSERT INTO table_name (column1, column2)
+	VALUES (NULL, 'some_value');
+	INSERT INTO employees (first_name, last_name, department, salary)
+	VALUES ('Mike', 'Jones', DEFAULT, NULL);
+--Common Errors and Troubleshooting
+	--Column Count Mismatch
+	--Duplicate Entry for Primary Key
+	--Data Type Mismatch
+	--NOT NULL Constraint Violation
+---full example
+	CREATE TABLE employee (
+	    id INT AUTO_INCREMENT PRIMARY KEY,          -- Integer
+	    name VARCHAR(50) NOT NULL,                  -- Variable-length string
+	    description TEXT,                           -- Large text
+	    price DECIMAL(10, 2),                       -- Decimal number
+	    is_active BOOLEAN,                          -- Boolean (stored as TINYINT)
+	    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Date and time
+	    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 	    -- Timestamp
+	    birth_date DATE,                            -- Date
+	    start_time TIME,                            -- Time
+	    status ENUM('active', 'inactive', 'pending'), -- Enum
+	    metadata JSON                               -- JSON data
+	);
+	INSERT INTO employee (
+    	name, description, price, is_active, birth_date, start_time, status, metadata
+	)
+	VALUES (
+	    'John Doe',                                 -- name (VARCHAR)
+	    'A sample description for John Doe.',       -- description (TEXT)
+	    99.99,                                      -- price (DECIMAL)
+	    TRUE,                                       -- is_active (BOOLEAN)
+	    '1990-05-15',                               -- birth_date (DATE)
+	    '14:30:00',                                 -- start_time (TIME)
+	    'active',                                   -- status (ENUM)
+	    '{"department": "Sales", "role": "Manager"}' -- metadata (JSON)
+	);
+---------------------- Update --------------------------
+--Updating a Single Column
+	UPDATE employees
+	SET salary = 50000
+	WHERE name = 'John Doe';	
+--Updating Multiple Columns
+	UPDATE employees
+	SET salary = 55000, department = 'Marketing'
+	WHERE employee_id = 101;
+--Updating All Rows
+	UPDATE employees
+	SET salary = salary * 1.10;
+--Using Subqueries in UPDATE
+	UPDATE employees
+	SET salary = 60000
+	WHERE department_id = (
+	    SELECT department_id
+	    FROM departments
+	    WHERE department_name = 'Sales'
+	);
+
+
+---------------------- delete --------------------------
+--Deleting a Specific Row
+	DELETE FROM employees
+	WHERE name = 'John Doe';
+--Deleting Based on a Condition
+	DELETE FROM employees
+	WHERE salary < 30000;
+--Deleting All Rows
+	DELETE FROM employees;
+--Subqueries in DELETE
+DELETE FROM employees
+WHERE department_id = (
+    SELECT department_id
+    FROM departments
+    WHERE department_name = 'Sales'
+);
+================Difference Between DELETE and TRUNCATE=================
+--tips 
+	Always use a WHERE clause unless you intend to update all rows in the table.
+
+	Test your WHERE clause with a SELECT statement before running the UPDATE to ensure you're targeting the correct rows.
+
+	Be cautious with UPDATE as it directly modifies data in the database. Consider using transactions (e.g., BEGIN TRANSACTION and COMMIT/ROLLBACK) to ensure data integrity.
+	
