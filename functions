@@ -1,0 +1,141 @@
+--user-defined functions that encapsulate reusable logic and return a single value. They are similar to stored procedures but are specifically designed to return a value, making them ideal for calculations, data transformations, or reusable logic.
+
+--Key Features of Stored Functions:
+	Return a Single Value: A stored function must return a value using the RETURN statement.
+
+	Can Be Used in SQL Queries: Stored functions can be called in SELECT, WHERE, and other SQL clauses.
+
+	Parameters: Functions can accept input parameters.
+--Simple Stored Function
+	calculates the total price of an order after applying a discount.
+
+	DELIMITER //
+
+	CREATE FUNCTION CalculateTotalPrice(order_amount DECIMAL(10, 2), discount DECIMAL(5, 2))
+	RETURNS DECIMAL(10, 2)
+	DETERMINISTIC
+	BEGIN
+	    DECLARE total_price DECIMAL(10, 2);
+	    SET total_price = order_amount - (order_amount * discount / 100);
+	    RETURN total_price;
+	END //
+
+	DELIMITER ;
+--Usage:
+
+	SELECT CalculateTotalPrice(1000, 10) AS TotalPrice;
+	-- Output: 900.00
+--Stored Function with Conditional Logic
+	determines the grade based on a student's score.
+
+		DELIMITER //
+
+		CREATE FUNCTION GetGrade(score INT)
+		RETURNS VARCHAR(10)
+		DETERMINISTIC
+		BEGIN
+		    DECLARE grade VARCHAR(10);
+
+		    IF score >= 90 THEN
+			SET grade = 'A';
+		    ELSEIF score >= 80 THEN
+			SET grade = 'B';
+		    ELSEIF score >= 70 THEN
+			SET grade = 'C';
+		    ELSEIF score >= 60 THEN
+			SET grade = 'D';
+		    ELSE
+			SET grade = 'F';
+		    END IF;
+
+		    RETURN grade;
+		END //
+
+		DELIMITER ;
+--Usage:
+
+	SELECT GetGrade(85) AS Grade;
+--Stored Function with a Loop
+	This function calculates the factorial of a number.
+
+		DELIMITER //
+
+		CREATE FUNCTION Factorial(n INT)
+		RETURNS INT
+		DETERMINISTIC
+		BEGIN
+		    DECLARE result INT DEFAULT 1;
+		    DECLARE i INT DEFAULT 1;
+
+		    WHILE i <= n DO
+			SET result = result * i;
+			SET i = i + 1;
+		    END WHILE;
+
+		    RETURN result;
+		END //
+
+		DELIMITER ;
+--Usage:
+	SELECT Factorial(5) AS Factorial;
+--Stored Function with String Manipulation
+	This function concatenates a first name and last name with a space in between.
+
+	DELIMITER //
+
+	CREATE FUNCTION FullName(first_name VARCHAR(50), last_name VARCHAR(50))
+	RETURNS VARCHAR(100)
+	DETERMINISTIC
+	BEGIN
+	    RETURN CONCAT(first_name, ' ', last_name);
+	END //
+
+	DELIMITER ;
+--Stored Function with Database Query
+	This function retrieves the total number of orders for a customer.
+
+	DELIMITER //
+
+	CREATE FUNCTION GetTotalOrders(customer_id INT)
+	RETURNS INT
+	READS SQL DATA
+	BEGIN
+	    DECLARE total_orders INT;
+
+	    SELECT COUNT(*)
+	    INTO total_orders
+	    FROM orders
+	    WHERE customer_id = customer_id;
+
+	    RETURN total_orders;
+	END //
+
+	DELIMITER ;
+----------------------------stored procedure----------------- 
+a stored procedure is a reusable block of SQL code that can be executed on demand. Unlike stored functions, stored procedures do not need to return a value (though they can). They are ideal for encapsulating complex logic, performing multiple operations, and improving code reusability.
+
+--Key Features of Stored Procedures:
+	Reusable: Can be called multiple times with different parameters.
+
+	Multiple Operations: Can perform multiple SQL operations in a single call.
+
+	Parameters: Can accept input (IN), output (OUT), and input-output (INOUT) parameters.
+
+	No Return Value: Unlike functions, procedures do not need to return a value (but can use OUT parameters to return data).
+
+	Control Structures: Supports IF, CASE, LOOP, WHILE, and other control structures.
+
+--Key Notes:
+	--Parameters:
+
+		IN: Input parameter (default).
+
+		OUT: Output parameter (used to return values).
+
+		INOUT: Input-output parameter (can be modified and returned).
+--Calling Stored Procedures:
+
+	--Use the CALL statement to execute a stored procedure.
+	CALL GenerateNumbers(10);
+
+

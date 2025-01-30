@@ -1,0 +1,102 @@
+----- special types of stored procedures that automatically execute (or "fire") 
+--
+	NEW refers to the new row being inserted or updated.
+	OLD refers to the existing row being updated or deleted.
+	NEW is not available in DELETE triggers, and OLD is not available in INSERT triggers.
+--Types of Triggers
+	BEFORE INSERT: Fires before an INSERT operation.
+
+	AFTER INSERT: Fires after an INSERT operation.
+
+	BEFORE UPDATE: Fires before an UPDATE operation.
+
+	AFTER UPDATE: Fires after an UPDATE operation.
+
+	BEFORE DELETE: Fires before a DELETE operation.
+
+	AFTER DELETE: Fires after a DELETE operation.
+	
+--BEFORE INSERT Trigger 
+	ensures that the email column is always in lowercase before inserting a new row into the users table.
+	DELIMITER //
+
+	CREATE TRIGGER before_user_insert
+	BEFORE INSERT ON users
+	FOR EACH ROW
+	BEGIN
+	    SET NEW.email = LOWER(NEW.email);
+	END //
+
+	DELIMITER ;
+--AFTER INSERT Trigger
+	logs every new user insertion into an audit_log table.
+	DELIMITER //
+
+	CREATE TRIGGER after_user_insert
+	AFTER INSERT ON users
+	FOR EACH ROW
+	BEGIN
+	    INSERT INTO audit_log (action, user_id, action_time)
+	    VALUES ('INSERT', NEW.id, NOW());
+	END //
+
+	DELIMITER ;
+	
+--BEFORE UPDATE Trigger
+	prevents updating the salary column to a value less than the current value.
+	DELIMITER //
+
+	CREATE TRIGGER before_salary_update
+	BEFORE UPDATE ON employees
+	FOR EACH ROW
+	BEGIN
+	    IF NEW.salary < OLD.salary THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Salary cannot be decreased';
+	    END IF;
+	END //
+
+	DELIMITER ;
+	
+--AFTER DELETE Trigger
+	logs every deletion from the orders table into an audit_log table.
+	DELIMITER //
+
+	CREATE TRIGGER after_order_delete
+	AFTER DELETE ON orders
+	FOR EACH ROW
+	BEGIN
+	    INSERT INTO audit_log (action, order_id, action_time)
+	    VALUES ('DELETE', OLD.id, NOW());
+	END //
+
+	DELIMITER ;
+
+--BEFORE DELETE Trigger
+	prevents deleting rows from the products table if the product is still in stock.
+	DELIMITER //
+
+	CREATE TRIGGER before_product_delete
+	BEFORE DELETE ON products
+	FOR EACH ROW
+	BEGIN
+	    IF OLD.stock_quantity > 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete product with stock remaining';
+	    END IF;
+	END //
+
+	DELIMITER ;
+	
+--Complex Trigger with Multiple Conditions
+	updates the total_sales column in the customers table whenever an order is inserted.
+
+	DELIMITER //
+
+	CREATE TRIGGER after_order_insert
+	AFTER INSERT ON orders
+	FOR EACH ROW
+	BEGIN
+	    UPDATE customers
+	    SET total_sales = total_sales + NEW.amount
+	    WHERE id = NEW.customer_id;
+	END //
+	

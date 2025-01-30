@@ -1,0 +1,39 @@
+--Logical--->script containing the database schema and data
+--Logical Backup Using mysqldump
+	--terminal linux
+		mysqldump -u username -p database_name > backup_file.sql
+	--Backup All Databases
+		mysqldump -u username -p --all-databases > backup_file.sql
+	--Backup Specific Tables
+		mysqldump -u username -p database_name table1 table2 > backup_file.sql
+	--Compress the Backup
+		mysqldump -u username -p database_name | gzip > backup_file.sql.gz
+--Restore a Database from mysqldump Backup
+	--Restore a Single Database
+		mysql -u username -p database_name < backup_file.sql
+	--Restore All Databases
+		mysql -u username -p < backup_file.sql
+	--Restore a Compressed Backup
+		--If the backup is compressed, use zcat or gunzip:
+			zcat backup_file.sql.gz | mysql -u username -p database_name
+		
+--Physical Backup (File System Backup)
+	Physical backups involve copying the actual data files from the MySQL data directory. This method is faster for large databases but requires the MySQL server to be stopped or locked during the backup.
+
+	--Steps for Physical Backup:
+		1-Stop the MySQL server:
+			sudo systemctl stop mysql
+		2-Copy the MySQL data directory (usually /var/lib/mysql):
+			sudo cp -r /var/lib/mysql /backup/mysql_backup
+		3-Start the MySQL server:
+
+		sudo systemctl start mysql
+	--Steps for Physical Restore:
+		1-Stop the MySQL server:
+			sudo systemctl stop mysql
+		2-Replace the MySQL data directory with the backup:
+			sudo rm -rf /var/lib/mysql
+			sudo cp -r /backup/mysql_backup /var/lib/mysql
+		3-Start the MySQL server:
+			sudo systemctl start mysql
+--Workbench
